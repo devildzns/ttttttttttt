@@ -1,0 +1,40 @@
+const Discord = require("discord.js");
+const db = require('quick.db')
+const axios = require("axios");
+const exponent = 9
+module.exports = {
+	name: 'remove',
+          category: "NFT Alerts",
+    run: async (client, message, args, text, prefix) => {
+		let ops = [
+			'above',
+			'below'
+		];
+		let disabled = ":x: Disabled"
+		function check(msg, arr) {
+			return arr.some(op => op.toLowerCase() === msg.toLowerCase());
+		}
+		let bruh = new Discord.MessageEmbed()
+          .setTitle("Please specify the option.")
+		.setDescription(`\`> alert ${ops.join("\n\n> alert ")}\``)
+.setColor("#FF0000")
+    
+     let embed = new Discord.MessageEmbed()
+        .setDescription("**The only options are: `above`, & `below`**")
+      .setColor("#FF0000")
+
+		if (!args[0]) return message.channel.send({ embed: bruh });
+		if (check(args[0], ops) === false)
+      
+			return message.channel.send(
+embed			);
+			switch (args[0].toLowerCase()) {
+			  case "above":
+               
+			    break;
+          			  case "below":
+  
+          
+          }
+	}
+};

@@ -1,0 +1,27 @@
+const db = require("quick.db");
+const Discord = require("discord.js")
+ const ms = require("ms")
+ module.exports = {
+  name: "profile",
+        category: "Vouches",
+
+ 
+    run: async (client, message, args, text, prefix) => {
+let user = message.mentions.users.first() || message.author
+        let positivethanks = await db.get(`positiveuserthanks_${user.id}`)
+        let negativethanks = await db.get(`negativeuserthanks_${user.id}`)
+        let totalhanks = await db.get(`userthanks_${user.id}`)
+
+  
+    let embed = new Discord.MessageEmbed()
+    .setTitle(`${user.username}'s Profile`)
+    .addField(`Total Vouches`, totalhanks || 0)
+        .addField(`Negative Vouches`, negativethanks || 0)
+    .addField(`Positive Vouches`, positivethanks || 0)
+
+     .setColor(`#00FF00`)
+    .setTimestamp()
+    .setFooter(message.guild.name , message.guild.iconURL())
+message.channel.send(embed)
+    }
+}

@@ -1,0 +1,100 @@
+const Discord = require("discord.js");
+const db = require("quick.db")
+const axios = require("axios");
+const exponent = 9
+module.exports = {
+  name: "coin-above",
+          category: "Watchlist",
+      aliases: ["aa+"],
+    run: async (client, message, args, text, prefix) => {
+      
+                                    try {
+
+         const guildicon = message.guild.iconURL();
+
+    let pog = db.get(`coins`)
+ 
+        let userwallets = db.get(`usercoins_${message.author.id}`)
+
+
+       if (userwallets >= 2) {
+            let embed = new Discord.MessageEmbed()
+            embed.setTitle("Error")
+            embed.setDescription(`**You can only track 2 coins.**`)
+      .setColor("#FF0000")
+            return message.channel.send({
+              embed: embed
+            });
+        }
+      
+    let coin = args[0]
+           let price = args[1]
+
+const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coin}`);
+		const data = await response.json();
+                                      
+ const usdprice = data.market_data.current_price.usd;
+
+    if (!coin) {
+      let embed = new Discord.MessageEmbed()
+      .setTitle("Syntax Error")
+        .setDescription(`**n!coin-above (coin) (price)**`)
+      .setColor("#FF0000")
+      return message.channel.send({
+        embed: embed
+      })
+    }
+    if (!price) {
+      let embed = new Discord.MessageEmbed()
+      .setTitle("Syntax Error")
+        .setDescription(`**n!coin-above (coin) (price)**`)
+      .setColor("#FF0000")
+      return message.channel.send({
+        embed: embed
+      })
+    }
+      
+      const usercoins =  db.get(`${coin}_${price}_user`)
+      if(usercoins){
+          let embed = new Discord.MessageEmbed()
+      .setTitle("Error")
+        .setDescription(`**The coin with same price is alredy being tracked by someone else. Please use a different price.**`)
+      .setColor("#FF0000")
+        return message.channel.send(embed)
+      }
+      
+
+                let yes2 = {
+                  name: coin,
+                  price: price,
+                  user: message.author.tag,
+                  code: `${coin}${price}`
+                }
+                let price2 = {price: price}
+
+     //db.set(`${coin}_price`, price)
+             db.push(`${coin}_prices`, price2)
+         db.set(`${coin}_${price}_user`, message.author.id)
+      db.set(`${coin}_${message.author.id}_price`, price)
+              db.push(`allcoins`, yes2)
+              db.add(`usercoins_${message.author.id}`, 1)
+        let embed = new Discord.MessageEmbed()
+        embed.setTitle("Success")
+        embed.setDescription(`**The coin has been added!**`)
+        embed.setColor("GREEN")
+        embed.setTimestamp()
+        message.channel.send({
+          embed: embed
+        })
+                                       } catch (err) {
+      console.log(err)
+     const embed2 = new Discord.MessageEmbed()
+        .setTitle(`Something went wrong`)
+        .setDescription(`**\`${err}\`**`)
+        .setTimestamp()
+        .setColor("RED")
+.setFooter("Developed by 0xDeViL#3230")
+        message.channel.send(embed2)
+    }
+  }
+}

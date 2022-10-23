@@ -1,0 +1,30 @@
+const Discord = require("discord.js")
+const db = require("quick.db")
+ const ms = require('parse-ms')
+module.exports = {
+    name: "walletuser",
+          category: "Wallet Notification",
+    description: "Banned wallets List",
+    run: async (client, message, args, text, prefix) => {
+  let Code = args[0]
+    let user = db.get(`user_${Code}`)      
+    const embed2 = new Discord.MessageEmbed()
+        .setTitle(`Error`)
+        .setDescription("**Couldn't Find User.**")
+        .setTimestamp()
+        .setColor("RED") 
+                 
+    if(!user) return message.channel.send(embed2) 
+                  
+        client.users.fetch(user, false).then((user) => {
+    let embed = new Discord.MessageEmbed()
+                            embed.setTitle(`Wallet`)
+                            embed.setDescription(`**Wallet: ||${Code}|| \nUsername: ||${user.tag}|| \nUser Mention: ||<@${user.id}>||**`)
+                          .setColor("GREEN")
+                        .setTimestamp()
+                        message.channel.send(embed) 
+        })
+        
+        
+    }
+    }

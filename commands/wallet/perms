@@ -1,0 +1,35 @@
+
+const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
+const Color = `a20808`;
+const db = require("quick.db");
+
+module.exports = {
+    name: "beta",
+          category: "Wallet Notification",
+    description: "Set Verify Role!",
+    usage: "Setverifyrole <Mention Role>",
+    memberpermissions: ["ADMINISTRATOR"],
+
+    run: async (client, message, args, text, prefix) => {
+
+        //Start
+
+        let Role = message.mentions.roles.first() || message.guild.roles.cache.get(args[0]);
+
+        if (!Role) return message.channel.send(`Please Mention A Valid Role!`);
+
+        await db.set(`NotifyRole_${message.guild.id}`, Role.id);
+
+        let Embed = new MessageEmbed()
+        .setColor("GREEN")
+        .setTitle(`Success`)
+        .setDescription(`Notification Role Has Been Set - <@&${Role.id}>`)
+        .setTimestamp();
+
+        return message.channel.send(Embed);
+
+        //End
+
+    }
+};

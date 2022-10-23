@@ -1,0 +1,85 @@
+const Discord = require("discord.js");
+const db = require("quick.db")
+module.exports = {
+    name: "buy",
+      category: "Marketplace",
+    aliases: ["say-embed"],
+    cooldown: 2,
+    usage: "embed <TITLE> ++ <DESCRIPTION>",
+    description: "Resends a message from u as an Embed",
+    memberpermissions: ["ADMINISTRATOR"],
+
+    run: async (client, message, args, user, text, prefix) => {
+         
+ let channel = db.get(`BuyChannel_${message.guild.id}`)
+  let ch = message.guild.channels.cache.get(channel)
+
+        let Code = "";
+  let Codes = "";
+  for (let i = 0; i < 7; i++) {
+    Codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    Code += Codes.charAt(Math.floor(Math.random() * Codes.length));
+  }
+            db.set(`code_${Code}`, message.author.id)
+
+        let price; let noprice = false;
+              let stock; let nostock = false;
+
+        let title; let notitle = false;
+      
+        let qu = new Discord.MessageEmbed()
+        .setFooter(client.user.username)
+        .setFooter(message.guild.name, message.guild.iconURL())  
+      
+      message.channel.send(qu.setTitle("What is the name of the Item you want to buy?").setColor("GREEN")).then(msg=>{
+            msg.channel.awaitMessages(m=>m.author.id===message.author.id, { max: 1, time: 60000, errors: ['time'] }).then(collected => 
+                {
+                    if(collected.first().content.toLowerCase() === "cancel")
+                        return message.reply("CANCELLED THE EMBED BUILDER!")
+                   
+                    else if(collected.first().content.length > 256)
+                        return message.reply("YOUR TITLE IS TOO LONG")
+                    else
+                        title = collected.first().content;
+              
+               message.channel.send(qu.setTitle("What should be the Price of the Item you want to buy?").setColor("GREEN")).then(msg=>{
+            msg.channel.awaitMessages(m=>m.author.id===message.author.id, { max: 1, time: 60000, errors: ['time'] }).then(collected => 
+                {
+                    if(collected.first().content.toLowerCase() === "cancel")
+                        return message.reply("CANCELLED THE EMBED BUILDER!")
+                   
+                   
+                    else
+                        price = collected.first().content;
+              
+               message.channel.send(qu.setTitle("How much stock do you want?").setColor("GREEN")).then(msg=>{
+            msg.channel.awaitMessages(m=>m.author.id===message.author.id, { max: 1, time: 60000, errors: ['time'] }).then(collected => 
+                {
+                    if(collected.first().content.toLowerCase() === "cancel")
+                        return message.reply("CANCELLED THE EMBED BUILDER!")
+                  
+                   
+                    else
+                        stock = collected.first().content;
+              
+                 let embed = new Discord.MessageEmbed()
+                            embed.setTitle(`Someone Wants to Buy`)
+                            embed.setDescription(`**Make a ticket to find more details about the Buyer/Seller! \n\n🛒・Item: ${title} \n\n💰・Price: ${price} \n\n📦・Stock: ${stock} \n\n🤫・Code: ||${Code}||**`)
+                          .setColor("GREEN")
+                        
+                        ch.send(embed)
+            })
+.catch(error => {
+console.log(error)
+return message.reply("You didn't answer in time!");
+});
+})
+})
+.catch(error => {
+console.log(error)
+return message.reply("You didn't answer in time!");
+});
+})
+})
+      })
+    }}
